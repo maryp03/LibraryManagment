@@ -1,0 +1,19 @@
+﻿@{
+    ViewData["Title"] = "Home";
+}
+
+<div class="container">
+    <div class="header">
+        <h1>Welcome to Marys Library Managment</h1>
+        <p>Your library at a click of a button.</p>
+    </div>
+
+    <div class="links">
+        <h3>Quick Links</h3>
+        <ul>
+            <li><a href="@Url.Action("Index", "Books")">View All Books</a></li>
+            <li><a href="@Url.Action("Login", "Account")">Login</a></li>
+            <li><a href="@Url.Action("Register", "Account")">Register</a></li>
+        </ul>
+    </div>
+</div>

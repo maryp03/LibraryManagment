@@ -1,0 +1,78 @@
+
+body.home-page {
+    background-image: url('/images/background2.jpg');
+    background-size: cover;
+    background-position: center;
+    background-attachment: fixed;
+    color: white;
+}
+
+
+.header {
+    background-color: rgba(240, 248, 255, 0.8); 
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+    .header h1 {
+        color: #2c3e50;
+        font-size: 36px;
+        text-align: center; 
+    }
+
+    .header p {
+        font-size: 18px;
+        color: #7f8c8d;
+        text-align: center; 
+    }
+
+
+.links {
+    margin-top: 30px;
+    background-color: rgba(52, 152, 219, 0.8); 
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3); 
+    text-align: center; 
+}
+
+ 
+    .links ul {
+        list-style-type: none;
+        padding: 0;
+        display: flex;
+        justify-content: center; 
+        gap: 20px; 
+    }
+
+
+    .links li {
+        margin: 10px 0;
+    }
+
+
+    .links a {
+        text-decoration: none;
+        font-size: 18px;
+        color: white;
+        transition: color 0.3s;
+    }
+
+
+        .links a:hover {
+            color: #2c3e50; 
+        }
+
+
+@media (max-width: 768px) {
+    .card-container {
+        flex-direction: column;
+        gap: 20px;
+    }
+
+    .card {
+        width: 90%;
+        margin: 0 auto;
+    }
+}
