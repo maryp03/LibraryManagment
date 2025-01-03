@@ -1,5 +1,6 @@
 using System.Diagnostics;
 using LibraryManagment.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace LibraryManagment.Controllers
@@ -19,6 +20,7 @@ namespace LibraryManagment.Controllers
             return View();
         }
 
+        [Authorize]
         public IActionResult Privacy()
         {
             return View();
