@@ -15,36 +15,65 @@ public static class SeedData
             serviceProvider.GetRequiredService<
                 DbContextOptions<LibraryManagmentContext>>()))
         {
-            
-            if (context.Book.Any())
+
+            if (!context.Category.Any())
             {
-                return;   
+                context.Category.AddRange(
+                    new Category
+                    {
+                        Name = "Fiction"
+                    },
+                    new Category
+                    {
+                        Name = "Classics"
+                    },
+                    new Category
+                    {
+                        Name = "Science Fiction"
+                    },
+                    new Category
+                    {
+                        Name = "Fantasy"
+                    },
+                    new Category
+                    {
+                        Name="Horror"
+                    },
+                    new Category
+                    {
+                        Name="Thiller"
+                    }
+                );
+                context.SaveChanges();
             }
-            context.Book.AddRange(
-                new Book
-                {
-                    Title = "Harry Potter and the Chamber of Secrets",
-                    AuthorName = "J.K. Rowling",
-                    YearPublished = 2005,
-                    AvailableCopies = 2
-                },
-                new Book
-                {
-                    Title = "Little Women",
-                    AuthorName = "Louisa May Alcott",
-                    YearPublished = 1868,
-                    AvailableCopies = 1
-                },
-                new Book
-                {
-                    Title = "Proud and Prejudice",
-                    AuthorName = "Jane Asten",
-                    YearPublished = 1813,
-                    AvailableCopies = 3
-                }
 
-            );
-
+            if (!context.Book.Any())
+            {
+                context.Book.AddRange(
+                    new Book
+                    {
+                        Title = "Harry Potter and the Chamber of Secrets",
+                        AuthorName = "J.K. Rowling",
+                        YearPublished = 2005,
+                        AvailableCopies = 2
+                    },
+                    new Book
+                    {
+                        Title = "Little Women",
+                        AuthorName = "Louisa May Alcott",
+                        YearPublished = 1868,
+                        AvailableCopies = 1
+                    },
+                    new Book
+                    {
+                        Title = "Proud and Prejudice",
+                        AuthorName = "Jane Austen",
+                        YearPublished = 1813,
+                        AvailableCopies = 3
+                    }
+                );
+                context.SaveChanges();
+            }
         }
     }
 }
