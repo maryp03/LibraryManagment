@@ -74,6 +74,39 @@ public static class SeedData
                 );
                 context.SaveChanges();
             }
+            if (!context.User.Any())
+            {
+                context.User.AddRange(
+                    new User
+                    {
+                        FirstName = "Anna",
+                        LastName = "Kowalska",
+                        Email = "anna@gmail.com"
+                    },
+                    new User
+                    {
+                        FirstName = "Kate",
+                        LastName = "Blue",
+                        Email = "katie123@gmail.com"
+                    }
+                );
+                context.SaveChanges();
+            }
+
+            if (!context.Borrowing.Any())
+            {
+                context.Borrowing.AddRange(
+                    new Borrowing
+                    {
+                        UserId = 4,
+                        BookId = 20,
+                        DateBorrowed = DateTime.Now,
+                        DateReturned = DateTime.Now,
+
+                    }
+                );
+                context.SaveChanges();
+            }
         }
     }
 }
