@@ -60,21 +60,19 @@ namespace LibraryManagment.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("UserId,BookId,DateBorrowed,DateReturned")] Borrowing borrowing)
+        public async Task<IActionResult> Create([Bind("UserId,BookId,DateBorrowed")] Borrowing borrowing)
         {
-            if (!ModelState.IsValid)
-            {
-                foreach (var modelError in ModelState.Values.SelectMany(v => v.Errors))
-                {
-                    Console.WriteLine($"Validation error: {modelError.ErrorMessage}");
-                }
-            }
-
             if (ModelState.IsValid)
             {
                 try
                 {
-                    await _context.BorrowBookAsync(borrowing.UserId, borrowing.BookId);
+
+                    borrowing.DateReturned = borrowing.DateBorrowed.AddDays(14);
+
+                    var dateReturned = borrowing.DateReturned ?? DateTime.MinValue;
+
+                    await _context.BorrowBookAsync(borrowing.UserId, borrowing.BookId, borrowing.DateBorrowed, dateReturned);
+
                     return RedirectToAction(nameof(Index));
                 }
                 catch (Exception ex)
@@ -82,6 +80,7 @@ namespace LibraryManagment.Controllers
                     ModelState.AddModelError(string.Empty, ex.Message);
                 }
             }
+
             ViewData["BookId"] = new SelectList(_context.Book, "Id", "Title", borrowing.BookId);
             ViewData["UserId"] = new SelectList(_context.User, "Id", "FullName", borrowing.UserId);
             return View(borrowing);
@@ -126,9 +125,11 @@ namespace LibraryManagment.Controllers
                         .Select(b => b.BookId)
                         .FirstOrDefault();
 
+                    borrowing.DateReturned = borrowing.DateBorrowed.AddDays(14);
+
                     if (oldBookId != borrowing.BookId)
                     {
-                        await _context.UpdateBorrowingAsync(borrowing.Id, borrowing.UserId, oldBookId, borrowing.BookId);
+                        await _context.UpdateBorrowingAsync(borrowing.Id, borrowing.UserId, oldBookId, borrowing.BookId, borrowing.DateBorrowed);
                     }
                     else
                     {
