@@ -11,6 +11,6 @@ namespace LibraryManagment.Models
 
 
         public ICollection<Borrowing>? Borrowings { get; set; }
-
+        public string FullName => $"{FirstName} {LastName}";
     }
 }

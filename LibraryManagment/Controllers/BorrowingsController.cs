@@ -49,8 +49,8 @@ namespace LibraryManagment.Controllers
         // GET: Borrowings/Create
         public IActionResult Create()
         {
-            ViewData["BookId"] = new SelectList(_context.Book, "Id", "AuthorName");
-            ViewData["UserId"] = new SelectList(_context.User, "Id", "Id");
+            ViewData["BookId"] = new SelectList(_context.Book, "Id", "Title");
+            ViewData["UserId"] = new SelectList(_context.User, "Id", "FullName");
             return View();
         }
 
@@ -61,15 +61,23 @@ namespace LibraryManagment.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("Id,UserId,BookId,DateBorrowed,DateReturned")] Borrowing borrowing)
         {
-            if (ModelState.IsValid)
+            if (!ModelState.IsValid)
             {
-                _context.Add(borrowing);
-                await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
+                // Sprawdź błędy w ModelState i zapisz je w konsoli
+                foreach (var modelError in ModelState.Values.SelectMany(v => v.Errors))
+                {
+                    Console.WriteLine($"Validation error: {modelError.ErrorMessage}");
+                }
+                // Upewnij się, że zwrócisz widok z danymi dla SelectList
+                ViewData["BookId"] = new SelectList(_context.Book, "Id", "Title", borrowing.BookId);
+                ViewData["UserId"] = new SelectList(_context.User, "Id", "FullName", borrowing.UserId);
+                return View(borrowing);
             }
-            ViewData["BookId"] = new SelectList(_context.Book, "Id", "AuthorName", borrowing.BookId);
-            ViewData["UserId"] = new SelectList(_context.User, "Id", "Id", borrowing.UserId);
-            return View(borrowing);
+
+            // Jeśli model jest prawidłowy, zapisz dane
+            _context.Add(borrowing);
+            await _context.SaveChangesAsync();
+            return RedirectToAction(nameof(Index));
         }
 
         // GET: Borrowings/Edit/5
@@ -85,8 +93,8 @@ namespace LibraryManagment.Controllers
             {
                 return NotFound();
             }
-            ViewData["BookId"] = new SelectList(_context.Book, "Id", "AuthorName", borrowing.BookId);
-            ViewData["UserId"] = new SelectList(_context.User, "Id", "Id", borrowing.UserId);
+            ViewData["BookId"] = new SelectList(_context.Book, "Id", "Title", borrowing.BookId);
+            ViewData["UserId"] = new SelectList(_context.User, "Id", "FullName", borrowing.UserId);
             return View(borrowing);
         }
 
@@ -122,8 +130,8 @@ namespace LibraryManagment.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["BookId"] = new SelectList(_context.Book, "Id", "AuthorName", borrowing.BookId);
-            ViewData["UserId"] = new SelectList(_context.User, "Id", "Id", borrowing.UserId);
+            ViewData["BookId"] = new SelectList(_context.Book, "Id", "Title", borrowing.BookId);
+            ViewData["UserId"] = new SelectList(_context.User, "Id", "FullName", borrowing.UserId);
             return View(borrowing);
         }
 
