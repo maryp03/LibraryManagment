@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using LibraryManagment.Data;
 using LibraryManagment.Models;
+using Microsoft.Data.SqlClient;
 
 namespace LibraryManagment.Controllers
 {
@@ -59,25 +60,31 @@ namespace LibraryManagment.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,UserId,BookId,DateBorrowed,DateReturned")] Borrowing borrowing)
+        public async Task<IActionResult> Create([Bind("UserId,BookId,DateBorrowed,DateReturned")] Borrowing borrowing)
         {
             if (!ModelState.IsValid)
             {
-                // Sprawdź błędy w ModelState i zapisz je w konsoli
                 foreach (var modelError in ModelState.Values.SelectMany(v => v.Errors))
                 {
                     Console.WriteLine($"Validation error: {modelError.ErrorMessage}");
                 }
-                // Upewnij się, że zwrócisz widok z danymi dla SelectList
-                ViewData["BookId"] = new SelectList(_context.Book, "Id", "Title", borrowing.BookId);
-                ViewData["UserId"] = new SelectList(_context.User, "Id", "FullName", borrowing.UserId);
-                return View(borrowing);
             }
 
-            // Jeśli model jest prawidłowy, zapisz dane
-            _context.Add(borrowing);
-            await _context.SaveChangesAsync();
-            return RedirectToAction(nameof(Index));
+            if (ModelState.IsValid)
+            {
+                try
+                {
+                    await _context.BorrowBookAsync(borrowing.UserId, borrowing.BookId);
+                    return RedirectToAction(nameof(Index));
+                }
+                catch (Exception ex)
+                {
+                    ModelState.AddModelError(string.Empty, ex.Message);
+                }
+            }
+            ViewData["BookId"] = new SelectList(_context.Book, "Id", "Title", borrowing.BookId);
+            ViewData["UserId"] = new SelectList(_context.User, "Id", "FullName", borrowing.UserId);
+            return View(borrowing);
         }
 
         // GET: Borrowings/Edit/5
@@ -114,8 +121,29 @@ namespace LibraryManagment.Controllers
             {
                 try
                 {
-                    _context.Update(borrowing);
-                    await _context.SaveChangesAsync();
+                    var oldBookId = _context.Borrowing
+                        .Where(b => b.Id == id)
+                        .Select(b => b.BookId)
+                        .FirstOrDefault();
+
+                    if (oldBookId != borrowing.BookId)
+                    {
+                        await _context.UpdateBorrowingAsync(borrowing.Id, borrowing.UserId, oldBookId, borrowing.BookId);
+                    }
+                    else
+                    {
+                        _context.Update(borrowing);
+                        await _context.SaveChangesAsync();
+                    }
+
+                    return RedirectToAction(nameof(Index));
+                }
+                catch (SqlException ex) when (ex.Message.Contains("The new book is not available"))
+                {
+                    ModelState.AddModelError("", "The selected book is no longer available.");
+                    ViewData["BookId"] = new SelectList(_context.Book, "Id", "Title", borrowing.BookId);
+                    ViewData["UserId"] = new SelectList(_context.User, "Id", "FullName", borrowing.UserId);
+                    return View(borrowing);
                 }
                 catch (DbUpdateConcurrencyException)
                 {
@@ -128,7 +156,6 @@ namespace LibraryManagment.Controllers
                         throw;
                     }
                 }
-                return RedirectToAction(nameof(Index));
             }
             ViewData["BookId"] = new SelectList(_context.Book, "Id", "Title", borrowing.BookId);
             ViewData["UserId"] = new SelectList(_context.User, "Id", "FullName", borrowing.UserId);
@@ -160,16 +187,29 @@ namespace LibraryManagment.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var borrowing = await _context.Borrowing.FindAsync(id);
-            if (borrowing != null)
+            if (!BorrowingExists(id))
             {
-                _context.Borrowing.Remove(borrowing);
+                return NotFound();
             }
 
-            await _context.SaveChangesAsync();
-            return RedirectToAction(nameof(Index));
+            try
+            {
+                await _context.ReturnBookAsync(id);
+                return RedirectToAction(nameof(Index));
+            }
+            catch (DbUpdateException ex)
+            {
+                if (ex.InnerException?.Message.Contains("Borrowing record not found.") == true)
+                {
+                    ModelState.AddModelError("", "Borrowing record not found.");
+                }
+                else
+                {
+                    ModelState.AddModelError("", "An error occurred while returning the book.");
+                }
+                return RedirectToAction(nameof(Index));
+            }
         }
-
         private bool BorrowingExists(int id)
         {
             return _context.Borrowing.Any(e => e.Id == id);
