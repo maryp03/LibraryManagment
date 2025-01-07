@@ -16,12 +16,13 @@ namespace LibraryManagment.Data
         public DbSet<Category> Category { get; set; } = default!;
         public DbSet<User> User { get; set; } = default!;
 
-        public async Task BorrowBookAsync(int userId, int bookId)
+        public async Task BorrowBookAsync(int userId, int bookId, DateTime dateBorrowed, DateTime dateReturned)
         {
             await Database.ExecuteSqlRawAsync(
-                "EXEC BorrowBook @UserId = {0}, @BookId = {1}",
-                userId, bookId);
+                "EXEC BorrowBook @UserId = {0}, @BookId = {1}, @DateBorrowed = {2}, @DateReturned = {3}",
+                userId, bookId, dateBorrowed, dateReturned);
         }
+
 
         public async Task ReturnBookAsync(int borrowingId)
         {
@@ -29,11 +30,12 @@ namespace LibraryManagment.Data
                 "EXEC ReturnBook @BorrowingId = {0}",
                 borrowingId);
         }
-        public async Task UpdateBorrowingAsync(int borrowingId, int userId, int oldBookId, int newBookId)
+        public async Task UpdateBorrowingAsync(int borrowingId, int userId, int oldBookId, int newBookId, DateTime dateBorrowed)
         {
             await Database.ExecuteSqlRawAsync(
-                "EXEC UpdateBorrowing @BorrowingId = {0}, @UserId = {1}, @OldBookId = {2}, @NewBookId = {3}",
-                borrowingId, userId, oldBookId, newBookId);
+                "EXEC UpdateBorrowing @BorrowingId = {0}, @UserId = {1}, @OldBookId = {2}, @NewBookId = {3}, @DateBorrowed = {4}",
+                borrowingId, userId, oldBookId, newBookId, dateBorrowed);
         }
+
     }
 }
