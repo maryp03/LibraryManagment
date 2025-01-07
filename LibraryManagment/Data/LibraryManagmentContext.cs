@@ -15,5 +15,12 @@ namespace LibraryManagment.Data
         public DbSet<Borrowing> Borrowing { get; set; } = default!;
         public DbSet<Category> Category { get; set; } = default!;
         public DbSet<User> User { get; set; } = default!;
+
+ /*       public async Task BorrowBookAsync(int userId, int bookId)
+        {
+            await Database.ExecuteSqlRawAsync(
+                "EXEC BorrowBook @UserId = {0}, @BookId = {1}",
+                userId, bookId);
+        } */
     }
 }

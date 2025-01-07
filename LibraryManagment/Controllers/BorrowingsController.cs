@@ -49,8 +49,8 @@ namespace LibraryManagment.Controllers
         // GET: Borrowings/Create
         public IActionResult Create()
         {
-            ViewData["BookId"] = new SelectList(_context.Book, "Id", "Id");
-            ViewData["UserId"] = new SelectList(_context.Set<User>(), "Id", "Id");
+            ViewData["BookId"] = new SelectList(_context.Book, "Id", "AuthorName");
+            ViewData["UserId"] = new SelectList(_context.User, "Id", "Id");
             return View();
         }
 
@@ -67,8 +67,8 @@ namespace LibraryManagment.Controllers
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["BookId"] = new SelectList(_context.Book, "Id", "Id", borrowing.BookId);
-            ViewData["UserId"] = new SelectList(_context.Set<User>(), "Id", "Id", borrowing.UserId);
+            ViewData["BookId"] = new SelectList(_context.Book, "Id", "AuthorName", borrowing.BookId);
+            ViewData["UserId"] = new SelectList(_context.User, "Id", "Id", borrowing.UserId);
             return View(borrowing);
         }
 
@@ -85,8 +85,8 @@ namespace LibraryManagment.Controllers
             {
                 return NotFound();
             }
-            ViewData["BookId"] = new SelectList(_context.Book, "Id", "Id", borrowing.BookId);
-            ViewData["UserId"] = new SelectList(_context.Set<User>(), "Id", "Id", borrowing.UserId);
+            ViewData["BookId"] = new SelectList(_context.Book, "Id", "AuthorName", borrowing.BookId);
+            ViewData["UserId"] = new SelectList(_context.User, "Id", "Id", borrowing.UserId);
             return View(borrowing);
         }
 
@@ -122,8 +122,8 @@ namespace LibraryManagment.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["BookId"] = new SelectList(_context.Book, "Id", "Id", borrowing.BookId);
-            ViewData["UserId"] = new SelectList(_context.Set<User>(), "Id", "Id", borrowing.UserId);
+            ViewData["BookId"] = new SelectList(_context.Book, "Id", "AuthorName", borrowing.BookId);
+            ViewData["UserId"] = new SelectList(_context.User, "Id", "Id", borrowing.UserId);
             return View(borrowing);
         }
 
