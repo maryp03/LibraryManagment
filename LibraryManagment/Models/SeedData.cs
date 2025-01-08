@@ -92,21 +92,6 @@ public static class SeedData
                 );
                 context.SaveChanges();
             }
-
-            if (!context.Borrowing.Any())
-            {
-                context.Borrowing.AddRange(
-                    new Borrowing
-                    {
-                        UserId = 4,
-                        BookId = 20,
-                        DateBorrowed = DateTime.Now,
-                        DateReturned = DateTime.Now,
-
-                    }
-                );
-                context.SaveChanges();
-            }
         }
     }
 }

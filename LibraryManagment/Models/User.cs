@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace LibraryManagment.Models
 {
@@ -8,7 +9,6 @@ namespace LibraryManagment.Models
         public string FirstName { get; set; }
         public string LastName { get; set; }
         public string Email { get; set; }
-
 
         public ICollection<Borrowing>? Borrowings { get; set; }
         public string FullName => $"{FirstName} {LastName}";

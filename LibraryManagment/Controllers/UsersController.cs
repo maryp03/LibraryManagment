@@ -8,6 +8,7 @@ using Microsoft.EntityFrameworkCore;
 using LibraryManagment.Data;
 using LibraryManagment.Models;
 
+
 namespace LibraryManagment.Controllers
 {
     public class UsersController : Controller
@@ -19,10 +20,12 @@ namespace LibraryManagment.Controllers
             _context = context;
         }
 
+
         // GET: Users
         public async Task<IActionResult> Index()
         {
-            return View(await _context.User.ToListAsync());
+            var users = await _context.User.ToListAsync();
+            return View(users);
         }
 
         // GET: Users/Details/5

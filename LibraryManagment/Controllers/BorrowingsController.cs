@@ -20,11 +20,31 @@ namespace LibraryManagment.Controllers
             _context = context;
         }
 
+        private int CalculateDelayDays(DateTime dateBorrowed)
+        {
+            var dueDate = dateBorrowed.AddDays(14);
+
+            var delay = (DateTime.Now - dueDate).Days;
+
+            return delay < 0 ? 0 : delay;
+        }
+
+
+
         // GET: Borrowings
         public async Task<IActionResult> Index()
         {
-            var libraryManagmentContext = _context.Borrowing.Include(b => b.Book).Include(b => b.User);
-            return View(await libraryManagmentContext.ToListAsync());
+            var libraryManagmentContext = await _context.Borrowing
+            .Include(b => b.Book)
+            .Include(b => b.User)
+            .ToListAsync();
+
+            foreach (var borrowing in libraryManagmentContext)
+            {
+                borrowing.DelayDays = CalculateDelayDays(borrowing.DateBorrowed);
+            }
+
+            return View(libraryManagmentContext);
         }
 
         // GET: Borrowings/Details/5
@@ -67,11 +87,9 @@ namespace LibraryManagment.Controllers
                 try
                 {
 
-                    borrowing.DateReturned = borrowing.DateBorrowed.AddDays(14);
+                    var dateReturned = DateTime.MinValue;
 
-                    var dateReturned = borrowing.DateReturned ?? DateTime.MinValue;
-
-                    await _context.BorrowBookAsync(borrowing.UserId, borrowing.BookId, borrowing.DateBorrowed, dateReturned);
+                    await _context.BorrowBookAsync(borrowing.UserId, borrowing.BookId, borrowing.DateBorrowed);
 
                     return RedirectToAction(nameof(Index));
                 }
@@ -120,12 +138,16 @@ namespace LibraryManagment.Controllers
             {
                 try
                 {
+                    if (borrowing.DateReturned == null)
+                    {
+                        borrowing.DateReturned = borrowing.DateBorrowed.AddDays(14);
+                    }
+
                     var oldBookId = _context.Borrowing
                         .Where(b => b.Id == id)
                         .Select(b => b.BookId)
                         .FirstOrDefault();
 
-                    borrowing.DateReturned = borrowing.DateBorrowed.AddDays(14);
 
                     if (oldBookId != borrowing.BookId)
                     {

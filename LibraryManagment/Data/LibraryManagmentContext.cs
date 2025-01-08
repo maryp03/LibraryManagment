@@ -16,11 +16,11 @@ namespace LibraryManagment.Data
         public DbSet<Category> Category { get; set; } = default!;
         public DbSet<User> User { get; set; } = default!;
 
-        public async Task BorrowBookAsync(int userId, int bookId, DateTime dateBorrowed, DateTime dateReturned)
+        public async Task BorrowBookAsync(int userId, int bookId, DateTime dateBorrowed)
         {
             await Database.ExecuteSqlRawAsync(
-                "EXEC BorrowBook @UserId = {0}, @BookId = {1}, @DateBorrowed = {2}, @DateReturned = {3}",
-                userId, bookId, dateBorrowed, dateReturned);
+                "EXEC BorrowBook @UserId = {0}, @BookId = {1}, @DateBorrowed = {2}, @DateReturned = NULL",
+                userId, bookId, dateBorrowed);
         }
 
 
