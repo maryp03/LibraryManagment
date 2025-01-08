@@ -8,9 +8,11 @@ using Microsoft.EntityFrameworkCore;
 using LibraryManagment.Data;
 using LibraryManagment.Models;
 using Microsoft.Data.SqlClient;
+using Microsoft.AspNetCore.Authorization;
 
 namespace LibraryManagment.Controllers
 {
+    [Authorize]
     public class BorrowingsController : Controller
     {
         private readonly LibraryManagmentContext _context;

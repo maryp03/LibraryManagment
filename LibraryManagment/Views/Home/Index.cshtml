@@ -5,15 +5,28 @@
 <div class="container">
     <div class="header">
         <h1>Welcome to Marys Library Managment</h1>
-        <p>Your library at a click of a button.</p>
+        <h5 class="intro-heading">Your library at a click of a button.</h5>
+        <p>That is a Library Management System, which will help you to easily manage your library.</p>
+
+        <p>With this system, you can:</p>
+        <ul class="features-list">
+            <li>View and manage all books in your collection.</li>
+            <li>Access and organize categories to keep everything streamlined.</li>
+            <li>Manage user accounts and track borrowings with ease.</li>
+            <li>Take control of your library operations with just a few clicks.</li>
+        </ul>
+
+        <p>Explore the features on your own! :))</p>
     </div>
 
     <div class="links">
         <h3>Quick Links</h3>
         <ul>
-            <li><a href="@Url.Action("Index", "Books")">View All Books</a></li>
-            <li><a href="@Url.Action("Login", "Account")">Login</a></li>
-            <li><a href="@Url.Action("Register", "Account")">Register</a></li>
+            <li><a href="@Url.Action("Index", "Books")">All Books</a></li>
+            <li><a href="@Url.Action("Index", "Users")">Library Users</a></li>
+            <li><a href="@Url.Action("Index", "Categories")">Book Categories</a></li>
+            <li><a href="@Url.Action("Index", "Borrowings")">Borrowed Books</a></li>
+            
         </ul>
     </div>
 </div>
